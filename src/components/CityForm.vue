@@ -64,6 +64,7 @@ export default {
       }
 
       this.$emit('add:city', this.city)
+      this.$refs.first.focus()
       this.city = {
         name: '',
         state: ''

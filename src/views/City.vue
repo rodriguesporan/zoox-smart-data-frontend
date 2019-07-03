@@ -1,7 +1,7 @@
 <template>
   <div class="city">
     <CityForm @add:city="addCity" :states="states" />
-    <CityTable :cities="cities" />
+    <CityTable :cities="cities" @delete:city="deleteCity" />
   </div>
 </template>
 
@@ -62,6 +62,13 @@ export default {
       })
       this.loading = false
       this.cities = [...this.cities, response.data]
+    },
+    async deleteCity(id) {
+      this.error = null
+      this.loading = true
+      await this.api.delete(`/cities/${id}`)
+      this.loading = false
+      this.cities = this.cities.filter(city => city._id !== id)
     }
   }
 }

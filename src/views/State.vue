@@ -1,7 +1,7 @@
 <template>
   <div class="state">
     <StateForm @add:state="addState" />
-    <StateTable :states="states" />
+    <StateTable :states="states" @delete:state="deleteState" />
   </div>
 </template>
 
@@ -59,6 +59,13 @@ export default {
       })
       this.loading = false
       this.states = [...this.states, response.data]
+    },
+    async deleteState(id) {
+      this.error = null
+      this.loading = true
+      await this.api.delete(`/states/${id}`)
+      this.loading = false
+      this.states = this.states.filter(state => state._id !== id)
     }
   }
 }

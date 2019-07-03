@@ -53,6 +53,7 @@ export default {
       }
 
       this.$emit('add:state', this.state)
+      this.$refs.first.focus()
       this.state = {
         name: '',
         uf: ''

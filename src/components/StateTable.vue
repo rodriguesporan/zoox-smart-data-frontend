@@ -8,13 +8,17 @@
       {{ error }}
     </div>
 
-    <table>
+    <p v-if="states.length < 1" class="empty-table">
+      Nenhum estado cadastrado
+    </p>
+    <table v-else>
       <thead>
         <tr>
           <th>Nome</th>
           <th>UF</th>
           <th>Criado em</th>
           <th>Atualizado em</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +27,10 @@
           <td>{{ state.uf }}</td>
           <td>{{ state.createdAt }}</td>
           <td>{{ state.updatedAt }}</td>
+          <td>
+            <button>Editar</button>
+            <button @click="$emit('delete:state', state._id)">Deletar</button>
+          </td>
         </tr>
       </tbody>
     </table>
