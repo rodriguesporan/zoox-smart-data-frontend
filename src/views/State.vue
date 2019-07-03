@@ -1,18 +1,58 @@
 <template>
   <div class="state">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <State />
+    <StateForm @add:state="addState" />
+    <StateTable :states="states" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import State from '@/components/State.vue'
+import StateTable from '@/components/StateTable.vue'
+import StateForm from '@/components/StateForm.vue'
+import axios from 'axios'
+const api = axios.create({
+  baseURL: 'https://zoox-smart-data-api.herokuapp.com',
+  headers: {
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjIxNTg5MDEsImV4cCI6MTU2MjQxODEwMX0.4VqH3YnAu_-jKrFjS97yS-E-2eRSCSso4TxQjMkJLb4'
+  }
+})
 
 export default {
   name: 'state',
   components: {
-    State
+    StateTable,
+    StateForm
+  },
+  data() {
+    return {
+      loading: false,
+      error: null,
+      states: []
+    }
+  },
+  created() {
+    this.fetchData()
+  },
+  methods: {
+    async fetchData() {
+      this.error = null
+      this.loading = true
+      const response = await api.get('/states')
+      this.states = response.data
+      this.loading = false
+    },
+    async addState(state) {
+      this.error = null
+      this.loading = true
+      const { name, uf } = state
+      const response = await api.post('/states', {
+        name,
+        uf
+      })
+      this.loading = false
+      this.states = [...this.states, response.data]
+    }
   }
 }
 </script>
