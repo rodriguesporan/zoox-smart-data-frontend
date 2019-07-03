@@ -10,13 +10,7 @@
 import StateTable from '@/components/StateTable.vue'
 import StateForm from '@/components/StateForm.vue'
 import axios from 'axios'
-const api = axios.create({
-  baseURL: 'https://zoox-smart-data-api.herokuapp.com',
-  headers: {
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjIxNTg5MDEsImV4cCI6MTU2MjQxODEwMX0.4VqH3YnAu_-jKrFjS97yS-E-2eRSCSso4TxQjMkJLb4'
-  }
-})
+import { format, parseISO } from 'date-fns'
 
 export default {
   name: 'state',
@@ -36,17 +30,30 @@ export default {
   },
   methods: {
     async fetchData() {
+      const baseURL = 'https://zoox-smart-data-api.herokuapp.com'
+      const { data } = await axios.post(`${baseURL}/sessions`)
+      this.api = axios.create({
+        baseURL,
+        headers: {
+          Authorization: `Bearer ${data.token}`
+        }
+      })
       this.error = null
       this.loading = true
-      const response = await api.get('/states')
-      this.states = response.data
+      const response = await this.api.get('/states')
+      this.states = response.data.map(state => {
+        const { createdAt, updatedAt } = state
+        state.createdAt = format(parseISO(createdAt), 'dd/MM/yyyy H:m:s')
+        state.updatedAt = format(parseISO(updatedAt), 'dd/MM/yyyy H:m:s')
+        return state
+      })
       this.loading = false
     },
     async addState(state) {
       this.error = null
       this.loading = true
       const { name, uf } = state
-      const response = await api.post('/states', {
+      const response = await this.api.post('/states', {
         name,
         uf
       })

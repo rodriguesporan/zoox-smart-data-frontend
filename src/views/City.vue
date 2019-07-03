@@ -10,13 +10,7 @@
 import CityTable from '@/components/CityTable.vue'
 import CityForm from '@/components/CityForm.vue'
 import axios from 'axios'
-const api = axios.create({
-  baseURL: 'https://zoox-smart-data-api.herokuapp.com',
-  headers: {
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjIxNTg5MDEsImV4cCI6MTU2MjQxODEwMX0.4VqH3YnAu_-jKrFjS97yS-E-2eRSCSso4TxQjMkJLb4'
-  }
-})
+import { format, parseISO } from 'date-fns'
 
 export default {
   name: 'city',
@@ -37,11 +31,24 @@ export default {
   },
   methods: {
     async fetchData() {
+      const baseURL = 'https://zoox-smart-data-api.herokuapp.com'
+      const { data } = await axios.post(`${baseURL}/sessions`)
+      this.api = axios.create({
+        baseURL,
+        headers: {
+          Authorization: `Bearer ${data.token}`
+        }
+      })
       this.error = null
       this.loading = true
-      const resCities = await api.get('/cities')
-      this.cities = resCities.data
-      const resStates = await api.get('/states')
+      const resCities = await this.api.get('/cities')
+      this.cities = resCities.data.map(city => {
+        const { createdAt, updatedAt } = city
+        city.createdAt = format(parseISO(createdAt), 'dd/MM/yyyy H:m:s')
+        city.updatedAt = format(parseISO(updatedAt), 'dd/MM/yyyy H:m:s')
+        return city
+      })
+      const resStates = await this.api.get('/states')
       this.states = resStates.data
       this.loading = false
     },
@@ -49,7 +56,7 @@ export default {
       this.error = null
       this.loading = true
       const { name, state } = city
-      const response = await api.post('/cities', {
+      const response = await this.api.post('/cities', {
         name,
         state
       })
