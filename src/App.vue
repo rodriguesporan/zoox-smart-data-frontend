@@ -19,12 +19,21 @@
   max-width: 680px;
   margin: 0 auto;
 }
+
+#app .hello h1 {
+  color: #777;
+}
+
+#app .hello p {
+  color: #777;
+}
 #nav {
   padding: 30px;
 }
 
 #nav a {
   font-weight: bold;
+  font-size: 24px;
   color: #2c3e50;
 }
 

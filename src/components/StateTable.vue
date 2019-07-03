@@ -27,8 +27,8 @@
           <td>{{ state.uf }}</td>
           <td>{{ state.createdAt }}</td>
           <td>{{ state.updatedAt }}</td>
-          <td>
-            <button>Editar</button>
+          <td style="display: flex; aling-items: space-between;">
+            <button style="margin-right: 10px;">Editar</button>
             <button @click="$emit('delete:state', state._id)">Deletar</button>
           </td>
         </tr>

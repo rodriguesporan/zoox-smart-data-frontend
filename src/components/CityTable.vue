@@ -27,8 +27,8 @@
           <td>{{ city.state.name }}</td>
           <td>{{ city.createdAt }}</td>
           <td>{{ city.updatedAt }}</td>
-          <td>
-            <button>Editar</button>
+          <td style="display: flex; aling-items: space-between;">
+            <button style="margin-right: 10px;">Editar</button>
             <button @click="$emit('delete:city', city._id)">Deletar</button>
           </td>
         </tr>
